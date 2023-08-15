@@ -1,21 +1,35 @@
-# redBeat_example
-redbeat periodic task with mongodb result backend
+# Celery and scheduler (redBeat)
 
-`apt install redis-server mongodb-server`
-
-`pip3 install requirements.txt` or activate the venv
+`poetry install`
 
 run:
+
 terminal 1:
-`celery -A tasks worker -l debug`
+`celery -A jobs.worker worker -l debug`
 
 terminal 2:
-`celery -A tasks beat -l debug`
-
--> should see the heartbeat task execution in terminal 1
+`celery -A jobs.worker beat -l debug`
 
 terminal 3:
+`celery -A jobs.worker flower --port=5556`
+
+terminal 4:
+
+run a python shell:
 
 - add task:
-`python3 urlSpeed.py -a -u www.google.com -k [key]`
--delete task: `python3 urlSpeed.py -a -k [key]`
+
+```
+from jobs.worker import *
+dummy_scheduled_task.delay()
+```
+
+- delete task:
+
+```
+delete_task("readbeatcheck_heartbeat_every_5_second")
+```
+
+Important notes:
+
+- with every changes, we should restart worker and python shell
